@@ -3,6 +3,7 @@
 class LoginController {
     public function index()
     {
-        echo 'login';
+        $response = new Response;
+        $response->view('login');
     }
 }

@@ -3,6 +3,7 @@
 class NotFoundController {
     public function index()
     {
-        echo 'not found';
+        $response = new Response;
+        $response->view(statusCode: 404, path: '404');
     }
 }

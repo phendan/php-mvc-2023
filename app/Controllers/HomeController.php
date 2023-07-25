@@ -3,6 +3,7 @@
 class HomeController {
     public function index()
     {
-        echo 'home';
+        $response = new Response;
+        $response->view('home/index');
     }
 }

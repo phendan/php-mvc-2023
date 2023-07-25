@@ -20,6 +20,16 @@ class Request {
         return $url;
     }
 
+    public function getInput(string $kind = 'post'): array
+    {
+        $input = match($kind) {
+            'post' => $_POST,
+            'get' => $_GET
+        };
+
+        return $input;
+    }
+
     public function setParams(array $pageParams): void
     {
         $this->pageParams = $pageParams;

@@ -2,10 +2,12 @@
 
 require_once path(__DIR__ . '/Router.php');
 require_once path(__DIR__ . '/Request.php');
+require_once path(__DIR__ . '/Response.php');
 require_once path(__DIR__ . '/Controllers/NotFoundController.php');
 require_once path(__DIR__ . '/Controllers/HomeController.php');
 require_once path(__DIR__ . '/Controllers/LoginController.php');
 require_once path(__DIR__ . '/Controllers/RegisterController.php');
+require_once path(__DIR__ . '/Models/FormValidation.php');
 
 class App {
     public function __construct()
@@ -28,14 +30,15 @@ class App {
 
     private function defineRoutes(Router $router)
     {
-        // $router->get('/', [HomeController::class, 'index']);
+        $router->get('/', [HomeController::class, 'index']);
 
-        // $router->get('/login', [LoginController::class, 'index']);
-        // $router->post('/login', [LoginController::class, 'create']);
+        $router->get('/login', [LoginController::class, 'index']);
+        $router->post('/login', [LoginController::class, 'create']);
 
-        // $router->get('/register', [RegisterController::class, 'index']);
+        $router->get('/register', [RegisterController::class, 'index']);
+        $router->post('/register', [RegisterController::class, 'create']);
 
         // $router->get('/posts', [PostsController::class, 'index']);
-        $router->get('/post/:id', [PostController::class, 'index']);
+        // $router->get('/post/:id', [PostController::class, 'index']);
     }
 }
