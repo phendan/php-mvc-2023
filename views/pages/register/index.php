@@ -2,6 +2,12 @@
     <h1>Register</h1>
 
     <form action="" method="post" novalidate>
+        <?php if (isset($errors['root'])): ?>
+            <?php foreach ($errors['root'] as $error): ?>
+                <div class="message error"><?=$error?></div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+
         <div class="form-group">
             <?php if (isset($errors['email'])): ?>
                 <?php foreach ($errors['email'] as $error): ?>

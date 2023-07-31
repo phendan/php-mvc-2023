@@ -1,11 +1,10 @@
 <?php
 
-class RegisterController {
+class RegisterController extends BaseController {
     // GET Request
     public function index(Request $request)
     {
-        $response = new Response;
-        $response->view('register/index');
+        $this->response->view('register/index');
     }
 
     // POST Request
@@ -25,8 +24,7 @@ class RegisterController {
         $validation->validate();
 
         if ($validation->fails()) {
-            $response = new Response;
-            $response->view(
+            $this->response->view(
                 path: 'register/index',
                 data: [
                     'title' => 'Register',
@@ -37,5 +35,21 @@ class RegisterController {
         }
 
         // User Registrierung
+        $user = new User($this->db);
+
+        try {
+            $user->register(
+                $formInput['username'],
+                $formInput['email'],
+                $formInput['password']
+            );
+            $this->response->redirectTo('/login');
+        } catch (Exception $e) {
+            $this->response->view('register/index', [
+                'errors' => [
+                    'root' => [$e->getMessage()]
+                ]
+            ]);
+        }
     }
 }

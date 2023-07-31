@@ -24,7 +24,8 @@ class Request {
     {
         $input = match($kind) {
             'post' => $_POST,
-            'get' => $_GET
+            'get' => $_GET,
+            'files' => $_FILES
         };
 
         return $input;

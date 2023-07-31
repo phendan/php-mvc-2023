@@ -1,9 +1,8 @@
 <?php
 
-class NotFoundController {
+class NotFoundController extends BaseController {
     public function index()
     {
-        $response = new Response;
-        $response->view(statusCode: 404, path: '404');
+        $this->response->view(statusCode: 404, path: '404');
     }
 }

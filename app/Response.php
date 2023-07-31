@@ -13,4 +13,10 @@ class Response {
 
         exit();
     }
+
+    public function redirectTo(string $path)
+    {
+        header('Location: ' . $path);
+        exit();
+    }
 }
