@@ -1,5 +1,9 @@
 <?php
 
+namespace App\Models;
+
+use Exception;
+
 class FormValidation {
     private array $errors = [];
     private array $rules;

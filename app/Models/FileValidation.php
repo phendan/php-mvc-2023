@@ -1,5 +1,9 @@
 <?php
 
+namespace App\Models;
+
+use Exception;
+
 class FileValidation {
     private array $rules;
     private array $errors = [];
@@ -19,6 +23,16 @@ class FileValidation {
     public function setRules(array $rules): void
     {
         $this->rules = $rules;
+    }
+
+    public function fails(): bool
+    {
+        return !empty($this->errors);
+    }
+
+    public function getErrors(): array
+    {
+        return $this->errors;
     }
 
     public function validate(): void
@@ -99,6 +113,8 @@ class FileValidation {
 
     private function maxsize($field, $satisfier)
     {
-        //
+        if ($this->inputFiles[$field]['size'] > (int) $satisfier) {
+            throw new Exception("The {$field} field must be no more than {$satisfier} bytes.");
+        }
     }
 }

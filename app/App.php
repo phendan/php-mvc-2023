@@ -1,5 +1,15 @@
 <?php
 
+namespace App;
+
+use App\Controllers\{
+    HomeController,
+    DashboardController,
+    LoginController,
+    PostController,
+    RegisterController
+};
+
 require_once path(__DIR__ . '/Router.php');
 require_once path(__DIR__ . '/Request.php');
 require_once path(__DIR__ . '/Response.php');
@@ -14,6 +24,8 @@ require_once path(__DIR__ . '/Models/FormValidation.php');
 require_once path(__DIR__ . '/Models/FileValidation.php');
 require_once path(__DIR__ . '/Models/Database.php');
 require_once path(__DIR__ . '/Models/User.php');
+require_once path(__DIR__ . '/Models/Post.php');
+require_once path(__DIR__ . '/Models/FileUpload.php');
 require_once path(__DIR__ . '/Helpers/Str.php');
 
 class App {
@@ -47,9 +59,11 @@ class App {
 
         $router->get('/dashboard', [DashboardController::class, 'index']);
 
-        // $router->get('/posts', [PostsController::class, 'index']);
         $router->get('/post/create', [PostController::class, 'show']);
         $router->post('/post/create', [PostController::class, 'create']);
-        // $router->get('/post/:id', [PostController::class, 'index']);
+
+        $router->get('/post/:id', [PostController::class, 'index']);
+
+        // $router->get('/posts', [PostsController::class, 'index']);
     }
 }

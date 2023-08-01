@@ -20,4 +20,4 @@ function dd(...$values) {
 
 require_once path(__DIR__ . '/../app/App.php');
 
-$app = new App;
+$app = new App\App;

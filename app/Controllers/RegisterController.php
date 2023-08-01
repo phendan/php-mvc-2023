@@ -1,5 +1,13 @@
 <?php
 
+namespace App\Controllers;
+
+use App\BaseController;
+use App\Request;
+use App\Models\FormValidation;
+use App\Models\User;
+use Exception;
+
 class RegisterController extends BaseController {
     // GET Request
     public function index(Request $request)

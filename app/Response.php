@@ -1,5 +1,7 @@
 <?php
 
+namespace App;
+
 class Response {
     public function view(string $path, array $data = [], int $statusCode = 200)
     {
@@ -11,6 +13,14 @@ class Response {
         require_once path(__DIR__ . "/../views/pages/{$path}.php");
         require_once path(__DIR__ . '/../views/partials/footer.php');
 
+        exit();
+    }
+
+    public function json(int $statusCode, array $data = [])
+    {
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        echo json_encode($data);
         exit();
     }
 

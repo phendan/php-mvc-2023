@@ -1,5 +1,13 @@
 <?php
 
+namespace App\Controllers;
+
+use App\BaseController;
+use App\Request;
+use App\Models\FormValidation;
+use App\Models\User;
+use Exception;
+
 class LoginController extends BaseController {
     public function index()
     {

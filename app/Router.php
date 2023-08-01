@@ -1,5 +1,9 @@
 <?php
 
+namespace App;
+
+use App\Controllers\NotFoundController;
+
 class Router {
     private array $routes = [];
 
@@ -12,8 +16,18 @@ class Router {
         $requestUrl = $request->getUrl();
         $requestMethod = $request->getMethod();
 
+        $routes = $this->routes[$requestMethod];
+
+        uksort($routes, function ($routeUrlA, $routeUrlB) {
+            $paramCountA = substr_count($routeUrlA, ':');
+            $paramCountB = substr_count($routeUrlB, ':');
+
+            if ($paramCountA < $paramCountB) return -1;
+            else return 1;
+        });
+
         // Check all routes
-        foreach ($this->routes[$requestMethod] as $routeUrl => $requestHandler) {
+        foreach ($routes as $routeUrl => $requestHandler) {
             $routeUrlSegments = explode('/', trim($routeUrl, '/'));
             $requestUrlSegments = explode('/', trim($requestUrl, '/'));
 
@@ -49,6 +63,8 @@ class Router {
             $this->controller = $controller;
             $this->method = $method;
             $this->params = $pageParams;
+
+            return;
         }
     }
 

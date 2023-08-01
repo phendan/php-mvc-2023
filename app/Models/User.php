@@ -1,5 +1,10 @@
 <?php
 
+namespace App\Models;
+
+use App\Helpers\Str;
+use Exception;
+
 class User {
     private string $id;
     private string $username;
@@ -10,8 +15,9 @@ class User {
     public function __construct(private Database $db)
     {}
 
-    public function find(int|string $identifier): bool
+    public function find(int|string $identifier = null): bool
     {
+        $identifier = $identifier ?? $_SESSION['userId'];
         $column = is_int($identifier) ? 'id' : 'username';
         $sql = "SELECT * FROM `users` WHERE `{$column}` = :identifier";
         $userQuery = $this->db->query($sql, [ 'identifier' => $identifier ]);
@@ -81,5 +87,15 @@ class User {
 
         // Die Session für den User erstellen = einloggen
         $_SESSION['userId'] = (int) $this->id;
+    }
+
+    public function isLoggedIn(): bool
+    {
+        return isset($_SESSION['userId']);
+    }
+
+    public function getId(): int
+    {
+        return (int) $this->id;
     }
 }
