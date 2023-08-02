@@ -87,4 +87,9 @@ class PostController extends BaseController {
             ]);
         }
     }
+
+    public function list(Request $request)
+    {
+        //
+    }
 }

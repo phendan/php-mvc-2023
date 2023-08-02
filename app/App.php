@@ -2,6 +2,9 @@
 
 namespace App;
 
+use App\Router;
+use App\Request;
+
 use App\Controllers\{
     HomeController,
     DashboardController,
@@ -10,27 +13,11 @@ use App\Controllers\{
     RegisterController
 };
 
-require_once path(__DIR__ . '/Router.php');
-require_once path(__DIR__ . '/Request.php');
-require_once path(__DIR__ . '/Response.php');
-require_once path(__DIR__ . '/BaseController.php');
-require_once path(__DIR__ . '/Controllers/NotFoundController.php');
-require_once path(__DIR__ . '/Controllers/HomeController.php');
-require_once path(__DIR__ . '/Controllers/LoginController.php');
-require_once path(__DIR__ . '/Controllers/RegisterController.php');
-require_once path(__DIR__ . '/Controllers/DashboardController.php');
-require_once path(__DIR__ . '/Controllers/PostController.php');
-require_once path(__DIR__ . '/Models/FormValidation.php');
-require_once path(__DIR__ . '/Models/FileValidation.php');
-require_once path(__DIR__ . '/Models/Database.php');
-require_once path(__DIR__ . '/Models/User.php');
-require_once path(__DIR__ . '/Models/Post.php');
-require_once path(__DIR__ . '/Models/FileUpload.php');
-require_once path(__DIR__ . '/Helpers/Str.php');
-
 class App {
     public function __construct()
     {
+        // $this->autoloadClasses();
+
         $router = new Router;
         $this->defineRoutes($router);
 
@@ -64,6 +51,21 @@ class App {
 
         $router->get('/post/:id', [PostController::class, 'index']);
 
-        // $router->get('/posts', [PostsController::class, 'index']);
+        $router->get('/post/:id/delete', [PostController::class, 'delete']);
+
+        $router->get('/posts', [PostController::class, 'list']);
+    }
+
+    private function autoloadClasses()
+    {
+        spl_autoload_register(function (string $namespace) {
+            $projectNamespace = 'App\\';
+            $className = str_replace($projectNamespace, '', $namespace);
+            $filePath = path(__DIR__ . '/' . $className . '.php');
+
+            if (file_exists($filePath)) {
+                require_once $filePath;
+            }
+        });
     }
 }

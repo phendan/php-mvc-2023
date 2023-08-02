@@ -2,10 +2,14 @@
 
 namespace App;
 
+use App\Helpers\Security;
+
 class Response {
     public function view(string $path, array $data = [], int $statusCode = 200)
     {
         http_response_code($statusCode);
+
+        $csrfToken = Security::csrfToken();
 
         extract($data);
 

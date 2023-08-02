@@ -36,6 +36,13 @@ class FormValidation {
 
     public function validate(): void
     {
+        try {
+            $this->csrfTokenPresent();
+        } catch (Exception $e) {
+            $this->errors['root'][] = $e->getMessage();
+            return;
+        }
+
         foreach ($this->rules as $field => $fieldRules) {
             $fieldRules = explode('|', $fieldRules);
 
@@ -88,6 +95,16 @@ class FormValidation {
 
                 if ($fieldRuleName === 'required') break;
             }
+        }
+    }
+
+    private function csrfTokenPresent()
+    {
+        if (
+            !isset($this->formInput['csrfToken']) ||
+            $_SESSION['csrfToken'] !== $this->formInput['csrfToken']
+        ) {
+            throw new Exception("The form request could not be validated. Did you mean to perform this action?");
         }
     }
 

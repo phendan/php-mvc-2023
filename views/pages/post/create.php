@@ -1,6 +1,8 @@
 <h1>Write Your Post</h1>
 
 <form action="" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrfToken" value="<?= $csrfToken ?>">
+
     <div class="form-group">
         <?php if (isset($errors['title'])): ?>
             <?php foreach ($errors['title'] as $error): ?>

@@ -18,6 +18,6 @@ function dd(...$values) {
     die();
 }
 
-require_once path(__DIR__ . '/../app/App.php');
+require_once path(__DIR__ . '/../vendor/autoload.php');
 
 $app = new App\App;
