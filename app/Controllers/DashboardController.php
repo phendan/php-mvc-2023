@@ -7,6 +7,15 @@ use App\BaseController;
 class DashboardController extends BaseController {
     public function index()
     {
-        $this->response->view('dashboard/index');
+        if (!$this->user->isLoggedIn()) {
+            $_SESSION['message'] = 'You must be logged in to view this page.';
+            $this->response->redirectTo('/login');
+        }
+
+        $posts = $this->user->getPosts();
+
+        $this->response->view('dashboard/index', [
+            'posts' => $posts
+        ]);
     }
 }

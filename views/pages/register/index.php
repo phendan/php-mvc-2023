@@ -8,6 +8,8 @@
             <?php endforeach; ?>
         <?php endif; ?>
 
+        <input type="hidden" name="csrfToken" value="<?= $csrfToken ?>">
+
         <div class="form-group">
             <?php if (isset($errors['email'])): ?>
                 <?php foreach ($errors['email'] as $error): ?>

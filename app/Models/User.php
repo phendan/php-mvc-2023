@@ -94,8 +94,32 @@ class User {
         return isset($_SESSION['userId']);
     }
 
+    public function logout(): void
+    {
+        unset($_SESSION['userId']);
+    }
+
     public function getId(): int
     {
         return (int) $this->id;
+    }
+
+    public function getPosts(): array
+    {
+        $sql = "SELECT * FROM `posts` WHERE `user_id` = :userId";
+        $postsQuery = $this->db->query($sql, [ 'userId' => $this->getId() ]);
+
+        $posts = [];
+
+        foreach ($postsQuery->results() as $result) {
+            $posts[] = new Post($this->db, $result);
+        }
+
+        return $posts;
+    }
+
+    public function owns(Post $model): bool
+    {
+        return $this->getId() === $model->getUserId();
     }
 }

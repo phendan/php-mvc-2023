@@ -3,12 +3,16 @@
 namespace App;
 
 use App\Helpers\Security;
+use App\Models\User;
 
 class Response {
+    public function __construct(private User $user) {}
+
     public function view(string $path, array $data = [], int $statusCode = 200)
     {
         http_response_code($statusCode);
 
+        $user = $this->user;
         $csrfToken = Security::csrfToken();
 
         extract($data);

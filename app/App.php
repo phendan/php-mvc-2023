@@ -9,6 +9,7 @@ use App\Controllers\{
     HomeController,
     DashboardController,
     LoginController,
+    LogoutController,
     PostController,
     RegisterController
 };
@@ -44,6 +45,8 @@ class App {
         $router->get('/register', [RegisterController::class, 'index']);
         $router->post('/register', [RegisterController::class, 'create']);
 
+        $router->get('/logout', [LogoutController::class, 'index']);
+
         $router->get('/dashboard', [DashboardController::class, 'index']);
 
         $router->get('/post/create', [PostController::class, 'show']);
@@ -51,7 +54,10 @@ class App {
 
         $router->get('/post/:id', [PostController::class, 'index']);
 
-        $router->get('/post/:id/delete', [PostController::class, 'delete']);
+        $router->get('/post/edit/:id', [PostController::class, 'edit']);
+        $router->post('/post/edit/:id', [PostController::class, 'update']);
+
+        $router->get('/post/delete/:id', [PostController::class, 'delete']);
 
         $router->get('/posts', [PostController::class, 'list']);
     }

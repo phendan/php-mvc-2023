@@ -14,8 +14,10 @@ class Post {
     private string $userId;
     private array $images;
 
-    public function __construct(private Database $db)
-    {}
+    public function __construct(private Database $db, ?array $data = [])
+    {
+        $this->setColumnsAsProperties($data);
+    }
 
     public function find(int $id): bool
     {
@@ -85,6 +87,41 @@ class Post {
         ]);
     }
 
+    public function edit(string $title, string $body): bool
+    {
+        $sql = "
+            UPDATE `posts`
+            SET `title` = :title, `body` = :body, `updated_at` = :updatedAt
+            WHERE `id` = :id
+        ";
+
+        $postData = [
+            'id' => $this->getId(),
+            'title' => $title,
+            'body' => $body,
+            'updatedAt' => time()
+        ];
+
+        $editQuery = $this->db->query($sql, $postData);
+        $this->setColumnsAsProperties($postData);
+
+        return (bool) $editQuery->rowCount();
+    }
+
+    public function delete(): bool
+    {
+        $images = $this->getImages();
+
+        foreach ($images as $image) {
+            FileUpload::delete($image);
+        }
+
+        $sql = "DELETE FROM `posts` WHERE `id` = :id";
+        $deleteQuery = $this->db->query($sql, [ 'id' => $this->getId() ]);
+
+        return (bool) $deleteQuery->rowCount();
+    }
+
     public function getId(): int
     {
         return (int) $this->id;
@@ -109,6 +146,11 @@ class Post {
     public function getUpdatedAt(): string
     {
         return date('D, d.m.Y H:i:s', $this->updatedAt);
+    }
+
+    public function getUserId(): int
+    {
+        return (int) $this->userId;
     }
 
     public function getImages(): array

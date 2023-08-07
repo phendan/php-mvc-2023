@@ -32,4 +32,9 @@ class FileUpload {
     {
         return $this->generatedName;
     }
+
+    public static function delete(string $path): bool
+    {
+        return unlink(ltrim($path, '/'));
+    }
 }
