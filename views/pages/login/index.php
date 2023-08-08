@@ -1,17 +1,6 @@
 <h1>Login</h1>
 
-<?php if (isset($_SESSION['message'])): ?>
-    <div class="message success"><?php echo $_SESSION['message']; ?></div>
-    <?php unset($_SESSION['message']); ?>
-<?php endif; ?>
-
 <form action="" method="post" novalidate>
-    <?php if (isset($errors['root'])): ?>
-        <?php foreach ($errors['root'] as $error): ?>
-            <div class="message error"><?= $error ?></div>
-        <?php endforeach; ?>
-    <?php endif; ?>
-
     <input type="hidden" name="csrfToken" value="<?= $csrfToken ?>">
 
     <div class="form-group">
@@ -37,6 +26,6 @@
     </div>
 
     <div class="form-group">
-        <input type="submit" value="Register">
+        <input type="submit" value="Login">
     </div>
 </form>

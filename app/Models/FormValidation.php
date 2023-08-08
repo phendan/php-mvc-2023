@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\Session;
 use Exception;
 
 class FormValidation {
@@ -102,7 +103,7 @@ class FormValidation {
     {
         if (
             !isset($this->formInput['csrfToken']) ||
-            $_SESSION['csrfToken'] !== $this->formInput['csrfToken']
+            Session::get('csrfToken') !== $this->formInput['csrfToken']
         ) {
             throw new Exception("The form request could not be validated. Did you mean to perform this action?");
         }

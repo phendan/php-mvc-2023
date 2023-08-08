@@ -59,6 +59,9 @@ class App {
 
         $router->get('/post/delete/:id', [PostController::class, 'delete']);
 
+        $router->get('/post/like/:id', [PostController::class, 'like']);
+        $router->get('/post/dislike/:id', [PostController::class, 'dislike']);
+
         $router->get('/posts', [PostController::class, 'list']);
     }
 

@@ -6,18 +6,26 @@ use App\BaseController;
 use App\Request;
 use App\Models\FormValidation;
 use App\Models\User;
+use App\Helpers\Session;
 use Exception;
+use App\Traits\HasProtectedRoutes;
 
 class RegisterController extends BaseController {
+    use HasProtectedRoutes;
+
     // GET Request
     public function index(Request $request)
     {
+        $this->redirectAuthenticatedUsers();
+
         $this->response->view('register/index');
     }
 
     // POST Request
     public function create(Request $request)
     {
+        $this->redirectAuthenticatedUsers();
+
         $formInput = $request->getInput();
 
         $validation = new FormValidation($formInput);
@@ -51,6 +59,7 @@ class RegisterController extends BaseController {
                 $formInput['email'],
                 $formInput['password']
             );
+            Session::flash('success', "Your account has been successfully created. Please sign in.");
             $this->response->redirectTo('/login');
         } catch (Exception $e) {
             $this->response->view('register/index', [

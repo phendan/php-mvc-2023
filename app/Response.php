@@ -4,6 +4,7 @@ namespace App;
 
 use App\Helpers\Security;
 use App\Models\User;
+use App\Helpers\Session;
 
 class Response {
     public function __construct(private User $user) {}
@@ -13,6 +14,7 @@ class Response {
         http_response_code($statusCode);
 
         $user = $this->user;
+        $session = Session::class;
         $csrfToken = Security::csrfToken();
 
         extract($data);

@@ -3,14 +3,14 @@
 namespace App\Controllers;
 
 use App\BaseController;
+use App\Traits\HasProtectedRoutes;
 
 class DashboardController extends BaseController {
+    use HasProtectedRoutes;
+
     public function index()
     {
-        if (!$this->user->isLoggedIn()) {
-            $_SESSION['message'] = 'You must be logged in to view this page.';
-            $this->response->redirectTo('/login');
-        }
+        $this->redirectAnonymousUsers();
 
         $posts = $this->user->getPosts();
 

@@ -21,3 +21,11 @@
             </ul>
         </nav>
     </header>
+
+    <?php if ($session::exists('success')): ?>
+        <div class="message success"><?= $session::flash('success') ?></div>
+    <?php endif; ?>
+
+    <?php if ($session::exists('error')): ?>
+        <div class="message error"><?= $session::flash('error') ?></div>
+    <?php endif; ?>

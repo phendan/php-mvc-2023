@@ -7,9 +7,14 @@ use App\Request;
 use App\Models\FormValidation;
 use App\Models\FileValidation;
 use App\Models\Post;
-use Exception;
+use App\Models\User;
+use App\Helpers\Session;
+use App\Helpers\Exception;
+use App\Traits\HasProtectedRoutes;
 
 class PostController extends BaseController {
+    use HasProtectedRoutes;
+
     // Show a single post
     public function index(Request $request)
     {
@@ -17,7 +22,7 @@ class PostController extends BaseController {
 
         $post = new Post($this->db);
         if (!$post->find($postId)) {
-            $_SESSION['message'] = 'The post you tried to view does not exist.';
+            Session::flash('error', 'The post you tried to view does not exist.');
             $this->response->redirectTo('/dashboard');
         }
 
@@ -31,19 +36,16 @@ class PostController extends BaseController {
     // Get request for create form
     public function show()
     {
+        $this->redirectAnonymousUsers();
         $this->response->view('/post/create');
     }
 
     // Post request from form
     public function create(Request $request)
     {
-        if (!$this->user->isLoggedIn()) {
-            $_SESSION['message'] = 'You must be signed in to view this page.';
-            $this->response->redirectTo('/login');
-        }
+        $this->redirectAnonymousUsers();
 
         $postData = $request->getInput('post');
-
         $formValidation = new FormValidation($postData);
 
         $formValidation->setRules([
@@ -83,7 +85,7 @@ class PostController extends BaseController {
             $this->response->redirectTo("/post/{$post->getId()}");
         } catch (Exception $e) {
             $this->response->view('post/create', [
-                'errors' => ['root' => [$e->getMessage()]]
+                'errors' => $e->getData()
             ]);
         }
     }
@@ -98,32 +100,28 @@ class PostController extends BaseController {
         // Get post id
         $postId = $request->getParams()['id'];
 
-        if (
-            !isset($request->getInput('get')['csrfToken']) ||
-            $request->getInput('get')['csrfToken'] !== $_SESSION['csrfToken']
-        ) {
-            $_SESSION['message'] = 'This request did not seem intentional. Did you mean to delete a post?';
-            $this->response->redirectTo('/dashboard');
-        }
+        $this->redirectUnintendedAccess($request, '/dashboard');
 
         $post = new Post($this->db);
 
         if (!$post->find($postId)) {
-            $_SESSION['message'] = 'This post has already been deleted.';
+            Session::flash('error', 'This post has already been deleted.');
             $this->response->redirectTo('/dashboard');
         }
 
-        if (!$this->user->isLoggedIn() || $this->user->owns($post)) {
-            $_SESSION['message'] = 'You do not have permission to delete this post.';
+        $this->redirectAnonymousUsers();
+
+        if ($this->user->owns($post)) {
+            Session::flash('error', 'You do not have permission to delete this post.');
             $this->response->redirectTo('/dashboard');
         }
 
         if (!$post->delete()) {
-            $_SESSION['message'] = 'Something went wrong';
+            Session::flash('error', 'Something went wrong');
             return $this->response->redirectTo('/dashboard');
         }
 
-        $_SESSION['message'] = 'The post was successfully deleted.';
+        Session::flash('success', 'The post was successfully deleted.');
         return $this->response->redirectTo('/dashboard');
     }
 
@@ -133,9 +131,11 @@ class PostController extends BaseController {
 
         $post = new Post($this->db);
         if (!$post->find($postId)) {
-            $_SESSION['message'] = 'The post you tried to edit does not exist.';
+            Session::flash('error', 'The post you tried to edit does not exist.');
             $this->response->redirectTo('/dashboard');
         }
+
+        $this->redirectAnonymousUsers();
 
         $this->response->view('/post/edit', [
             'post' => $post
@@ -148,12 +148,14 @@ class PostController extends BaseController {
         $post = new Post($this->db);
 
         if (!$post->find($postId)) {
-            $_SESSION['message'] = 'The post you tried to edit does not exist.';
+            Session::flash('error', 'The post you tried to edit does not exist.');
             $this->response->redirectTo('/dashboard');
         }
 
-        if (!$this->user->isLoggedIn() || !$this->user->owns($post)) {
-            $_SESSION['message'] = 'You do not have permission to edit this post.';
+        $this->redirectAnonymousUsers();
+
+        if (!$this->user->owns($post)) {
+            Session::flash('error', 'You do not have permission to edit this post.');
             $this->response->redirectTo('/dashboard');
         }
 
@@ -184,7 +186,44 @@ class PostController extends BaseController {
             ]);
         }
 
-        $_SESSION['message'] = 'Your post has been successfully updated';
+        Session::flash('error', 'Your post has been successfully updated');
+        $this->response->redirectTo("/post/{$post->getId()}");
+    }
+
+    public function like(Request $request)
+    {
+        $postId = $request->getParams()['id'];
+        $post = new Post($this->db);
+
+        if (!$post->find($postId)) {
+            Session::flash('error', 'The post you tried to edit does not exist.');
+            $this->response->redirectTo('/dashboard');
+        }
+
+        $this->redirectUnintendedAccess($request);
+        $this->redirectAnonymousUsers();
+
+        if (!$post->like($this->user->getId())) {
+            Session::flash('error', "You've already liked this post.");
+        }
+
+        $this->response->redirectTo("/post/{$post->getId()}");
+    }
+
+    public function dislike(Request $request)
+    {
+        $postId = $request->getParams()['id'];
+        $post = new Post($this->db);
+
+        if (!$post->find($postId)) {
+            Session::flash('error', 'The post you tried to edit does not exist.');
+            $this->response->redirectTo('/dashboard');
+        }
+
+        $this->redirectUnintendedAccess($request);
+        $this->redirectAnonymousUsers();
+
+        $post->dislike($this->user->getId());
         $this->response->redirectTo("/post/{$post->getId()}");
     }
 }

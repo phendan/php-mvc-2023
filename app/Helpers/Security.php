@@ -3,12 +3,13 @@
 namespace App\Helpers;
 
 use App\Helpers\Str;
+use App\Helpers\Session;
 
 class Security {
     public static function csrfToken(): string
     {
         $csrfToken = Str::token();
-        $_SESSION['csrfToken'] = $csrfToken;
+        Session::set('csrfToken', $csrfToken);
 
         return $csrfToken;
     }

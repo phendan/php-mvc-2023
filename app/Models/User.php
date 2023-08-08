@@ -3,9 +3,14 @@
 namespace App\Models;
 
 use App\Helpers\Str;
-use Exception;
+use App\Helpers\Session;
+use App\Helpers\Exception;
+
+use App\Traits\RepresentsDatabaseEntry;
 
 class User {
+    use RepresentsDatabaseEntry;
+
     private string $id;
     private string $username;
     private string $email;
@@ -17,8 +22,9 @@ class User {
 
     public function find(int|string $identifier = null): bool
     {
-        $identifier = $identifier ?? $_SESSION['userId'];
+        $identifier = $identifier ?? Session::get('userId');
         $column = is_int($identifier) ? 'id' : 'username';
+
         $sql = "SELECT * FROM `users` WHERE `{$column}` = :identifier";
         $userQuery = $this->db->query($sql, [ 'identifier' => $identifier ]);
 
@@ -30,14 +36,6 @@ class User {
         $this->setColumnsAsProperties($userData);
 
         return true;
-    }
-
-    private function setColumnsAsProperties(array $data)
-    {
-        foreach ($data as $column => $value) {
-            $column = Str::toCamelCase($column);
-            $this->{$column} = $value;
-        }
     }
 
     public function register(string $username, string $email, string $password): void
@@ -74,7 +72,7 @@ class User {
     {
         // Versuchen, den User zu finden
         if (!$this->find($username)) {
-            throw new Exception('The username could not be found.');
+            throw new Exception(data: [ 'username' => ['The username could not be found.'] ]);
         }
 
         // Passwort-Hash aus den Userdaten
@@ -82,21 +80,21 @@ class User {
 
         // Passwort aus dem Formular mit Hash aus der DB abgleichen
         if (!password_verify($password, $passwordHash)) {
-            throw new Exception("Your password did not match.");
+            throw new Exception(data: ['password' => ["Your password did not match."] ]);
         }
 
         // Die Session für den User erstellen = einloggen
-        $_SESSION['userId'] = (int) $this->id;
+        Session::set('userId', (int) $this->id);
     }
 
     public function isLoggedIn(): bool
     {
-        return isset($_SESSION['userId']);
+        return Session::exists('userId');
     }
 
     public function logout(): void
     {
-        unset($_SESSION['userId']);
+        Session::delete('userId');
     }
 
     public function getId(): int
